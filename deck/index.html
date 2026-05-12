@@ -507,6 +507,23 @@
       document.addEventListener('scroll', syncFromScroll, { passive: true, capture: true });
       window.addEventListener('scroll', syncFromScroll,   { passive: true });
 
+      /* Wheel → slide nav. A standard mouse wheel scrolls vertically only,
+         which does nothing in a horizontal-snap deck. Translate vertical
+         deltas into prev/next, debounced so a single flick = one slide.
+         Trackpad horizontal swipes already work via native horizontal
+         scroll, so we ignore those (deltaX dominant). */
+      var wheelLock = 0;
+      function onWheel(e) {
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; /* horizontal swipe — let it through */
+        var now = Date.now();
+        if (now < wheelLock) { e.preventDefault(); return; }
+        if (Math.abs(e.deltaY) < 8) return; /* ignore micro-noise */
+        e.preventDefault();
+        wheelLock = now + 480;
+        go(active + (e.deltaY > 0 ? 1 : -1));
+      }
+      window.addEventListener('wheel', onWheel, { passive: false });
+
       document.body.setAttribute('tabindex', '-1');
       document.body.style.outline = 'none';
       function focusDeck() { try { window.focus(); document.body.focus({ preventScroll: true }); } catch (_) {} }
