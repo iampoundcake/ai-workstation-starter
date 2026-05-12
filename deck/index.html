@@ -40,22 +40,26 @@
       font-size: 16px;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
-      display: flex;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
+      overflow: hidden;
     }
-    body::-webkit-scrollbar { display: none; }
     p { text-wrap: pretty; }
     h1, h2, h3 { text-wrap: balance; }
 
-    /* ─── slide surface (horizontal-snap deck) ───────────────────────── */
+    /* ─── deck-track: transform-based horizontal slider ───────────────── */
+    .deck-track {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      transform: translateX(calc(var(--slide-index, 0) * -100vw));
+      transition: transform 480ms cubic-bezier(.22,1,.36,1);
+      will-change: transform;
+    }
+
+    /* ─── slide surface ──────────────────────────────────────────────── */
     .slide {
       flex: 0 0 100vw;
       width: 100vw;
       height: 100vh;
-      scroll-snap-align: start;
       padding: 60px 84px 96px;
       display: flex;
       flex-direction: column;
@@ -261,6 +265,7 @@
   </style>
 </head>
 <body>
+<div class="deck-track" id="deck-track">
 
   <!-- 01 ─ COVER ──────────────────────────────────────────────────── -->
   <section class="slide cover" data-screen-label="01 Cover">
@@ -460,39 +465,38 @@
     <div class="hc-footer"><span>session closed</span><span>08 / 08</span></div>
   </section>
 
+</div><!-- /.deck-track -->
+
   <!-- ─── global deck chrome ─────────────────────────────────────── -->
   <div class="deck-progress" id="deck-progress" aria-hidden></div>
   <div class="deck-counter" id="deck-counter">1 / 8</div>
   <div class="deck-hint">← / → · scroll · swipe</div>
 
   <script>
-    /* simple-deck nav script — proven 5-rule pattern */
+    /* Transform-based deck nav.
+       The previous scroll-snap version updated counter/progress but failed
+       to actually scroll when the body wasn't the scroller (depends on
+       html/body sizing rules that vary by browser + protocol). This version
+       sets a CSS variable on .deck-track and lets `transform: translateX`
+       do the work — no scroll detection, deterministic, works in any
+       host context (file://, iframe, dev server). */
     (function () {
+      var track    = document.getElementById('deck-track');
       var slides   = document.querySelectorAll('.slide');
       var counter  = document.getElementById('deck-counter');
       var progress = document.getElementById('deck-progress');
       var KEY      = 'aiws-deck-pos';
       var active   = 0;
 
-      function scroller() {
-        if (document.body.scrollWidth > document.body.clientWidth + 1) return document.body;
-        return document.scrollingElement || document.documentElement;
-      }
       function setActive(i) {
-        active = i;
-        if (counter)  counter.textContent  = (i + 1) + ' / ' + slides.length;
-        if (progress) progress.style.width = (((i + 1) / slides.length) * 100) + '%';
-        try { localStorage.setItem(KEY, String(i)); } catch (_) {}
+        active = Math.max(0, Math.min(slides.length - 1, i));
+        track.style.setProperty('--slide-index', String(active));
+        if (counter)  counter.textContent  = (active + 1) + ' / ' + slides.length;
+        if (progress) progress.style.width = (((active + 1) / slides.length) * 100) + '%';
+        try { localStorage.setItem(KEY, String(active)); } catch (_) {}
       }
-      function go(i) {
-        var next = Math.max(0, Math.min(slides.length - 1, i));
-        setActive(next);
-        scroller().scrollTo({ left: next * window.innerWidth, behavior: 'smooth' });
-      }
-      function syncFromScroll() {
-        var i = Math.round(scroller().scrollLeft / window.innerWidth);
-        if (i !== active && i >= 0 && i < slides.length) setActive(i);
-      }
+      function go(i) { setActive(i); }
+
       function onKey(e) {
         var t = e.target;
         if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
@@ -501,44 +505,40 @@
         else if (e.key === 'Home')                                                        { e.preventDefault(); go(0); }
         else if (e.key === 'End')                                                         { e.preventDefault(); go(slides.length - 1); }
       }
-
       window.addEventListener('keydown', onKey, true);
       document.addEventListener('keydown', onKey, true);
-      document.addEventListener('scroll', syncFromScroll, { passive: true, capture: true });
-      window.addEventListener('scroll', syncFromScroll,   { passive: true });
 
-      /* Wheel → slide nav. A standard mouse wheel scrolls vertically only,
-         which does nothing in a horizontal-snap deck. Translate vertical
-         deltas into prev/next, debounced so a single flick = one slide.
-         Trackpad horizontal swipes already work via native horizontal
-         scroll, so we ignore those (deltaX dominant). */
+      /* Wheel → slide nav. Vertical wheel = prev/next, debounced so one
+         flick equals one slide. Horizontal trackpad swipe is treated the
+         same (deltaX dominant) — both axes navigate. */
       var wheelLock = 0;
       function onWheel(e) {
-        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; /* horizontal swipe — let it through */
         var now = Date.now();
         if (now < wheelLock) { e.preventDefault(); return; }
-        if (Math.abs(e.deltaY) < 8) return; /* ignore micro-noise */
+        var dx = e.deltaX, dy = e.deltaY;
+        var mag = Math.max(Math.abs(dx), Math.abs(dy));
+        if (mag < 8) return;
         e.preventDefault();
-        wheelLock = now + 480;
-        go(active + (e.deltaY > 0 ? 1 : -1));
+        wheelLock = now + 520;
+        var dir = (Math.abs(dx) > Math.abs(dy) ? dx : dy) > 0 ? 1 : -1;
+        go(active + dir);
       }
       window.addEventListener('wheel', onWheel, { passive: false });
 
-      document.body.setAttribute('tabindex', '-1');
-      document.body.style.outline = 'none';
-      function focusDeck() { try { window.focus(); document.body.focus({ preventScroll: true }); } catch (_) {} }
-      document.addEventListener('mousedown', focusDeck);
-      window.addEventListener('load', focusDeck);
-      focusDeck();
+      /* Touch: simple horizontal swipe handler */
+      var touchX = null;
+      window.addEventListener('touchstart', function (e) { touchX = e.touches[0].clientX; }, { passive: true });
+      window.addEventListener('touchend',   function (e) {
+        if (touchX == null) return;
+        var dx = e.changedTouches[0].clientX - touchX;
+        touchX = null;
+        if (Math.abs(dx) > 40) go(active + (dx < 0 ? 1 : -1));
+      }, { passive: true });
 
+      /* Restore last-seen position */
       try {
         var saved = parseInt(localStorage.getItem(KEY) || '0', 10);
-        if (!isNaN(saved) && saved >= 0 && saved < slides.length) {
-          setActive(saved);
-          scroller().scrollTo({ left: saved * window.innerWidth, behavior: 'instant' });
-        } else {
-          setActive(0);
-        }
+        setActive(isNaN(saved) ? 0 : saved);
       } catch (_) { setActive(0); }
     })();
   </script>
