@@ -21,14 +21,20 @@
       --hc-bg:      #111410;
       --hc-bg2:     #1A1E1A;
       --hc-surface: #1A1E1A;
-      --hc-border:  rgba(139,168,136,0.18);
+      --hc-border:  rgba(139,168,136,0.18);  /* sage at 18% — structural */
       --hc-ink:     #E8E4DF;
       --hc-ink2:    #8A8580;
-      --hc-green:   #8BA888;
-      --hc-cyan:    #8BA888;
+      /* Primary accent = terracotta (the warm contrast). Sage stays for
+         ambient/structural duty (grid, borders, code function names,
+         the canonical green chrome dot). */
+      --hc-accent:  #C47D5A;  /* terracotta-marker — primary punchy */
+      --hc-sage:    #8BA888;  /* reading-lamp-sage — room color */
       --hc-amber:   #D4A855;
       --hc-rose:    #B0A0C8;
       --hc-red:     #C47D5A;
+      /* Back-compat aliases for shipped class names */
+      --hc-green:   var(--hc-accent);
+      --hc-cyan:    var(--hc-sage);
       --font-mono:  'JetBrains Mono','SF Mono',ui-monospace,Menlo,monospace;
       --font-sans:  'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
     }
@@ -112,7 +118,7 @@
     .hc-chrome .dots span { width: 11px; height: 11px; border-radius: 50%; background: #2a2d33; }
     .hc-chrome .dots span:nth-child(1) { background: #ff5f57; }
     .hc-chrome .dots span:nth-child(2) { background: #febc2e; }
-    .hc-chrome .dots span:nth-child(3) { background: var(--hc-green); }
+    .hc-chrome .dots span:nth-child(3) { background: var(--hc-sage); }
 
     /* ─── prompt + headlines ─────────────────────────────────────────── */
     .hc-prompt {
@@ -128,7 +134,7 @@
       line-height: 1.0;
       letter-spacing: -0.02em;
       color: #f1f1f1;
-      text-shadow: 0 0 30px rgba(139,168,136,0.35), 0 0 60px rgba(139,168,136,0.10);
+      text-shadow: 0 0 30px rgba(196,125,90,0.35), 0 0 60px rgba(196,125,90,0.10);
       margin: 0 0 14px;
     }
     .hc-h2 {
@@ -167,8 +173,8 @@
       padding: 3px 10px;
       border: 1px solid var(--hc-border);
       border-radius: 4px;
-      color: var(--hc-green);
-      background: rgba(139,168,136,0.04);
+      color: var(--hc-accent);
+      background: rgba(196,125,90,0.05);
       margin: 2px 6px 2px 0;
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -216,7 +222,7 @@
     .hc-codebox .st  { color: var(--hc-green); }
     .hc-codebox .fn  { color: var(--hc-cyan); }
     .hc-codebox .var { color: var(--hc-rose); }
-    .hc-codebox .hl  { color: #fff; background: rgba(139,168,136,0.15); padding: 0 4px; border-radius: 3px; }
+    .hc-codebox .hl  { color: #fff; background: rgba(196,125,90,0.18); padding: 0 4px; border-radius: 3px; }
 
     /* ─── big stat ──────────────────────────────────────────────────── */
     .hc-big {
@@ -225,7 +231,7 @@
       font-weight: 700;
       line-height: 1;
       color: var(--hc-green);
-      text-shadow: 0 0 40px rgba(139,168,136,0.40), 0 0 80px rgba(139,168,136,0.15);
+      text-shadow: 0 0 40px rgba(196,125,90,0.40), 0 0 80px rgba(196,125,90,0.15);
       letter-spacing: -0.04em;
       margin: 0;
     }
@@ -255,7 +261,7 @@
     .deck-progress {
       position: fixed; top: 0; left: 0; height: 2px;
       background: var(--hc-green); width: 0;
-      box-shadow: 0 0 14px rgba(139,168,136,0.6);
+      box-shadow: 0 0 14px rgba(196,125,90,0.6);
       z-index: 30; transition: width 0.18s ease;
     }
   </style>
