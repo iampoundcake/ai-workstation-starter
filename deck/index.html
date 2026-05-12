@@ -1,8 +1,10 @@
 <!doctype html>
 <!--
-  AI Workstation pitch deck — Hermes Cyber Terminal aesthetic.
-  Visual system from open-design/html-ppt-hermes-cyber-terminal.
-  Nav script from open-design/simple-deck (horizontal scroll-snap).
+  AI Workstation pitch deck.
+  Layout: Hermes Cyber Terminal (open-design/html-ppt-hermes-cyber-terminal).
+  Palette: Workshop (anotherjoescott.com — sage room color, terracotta marker,
+  brass bookmark, lavender field-note, on workshop-ink).
+  Nav: transform-based slider, keyboard / wheel / swipe.
   8 slides. JetBrains Mono everywhere. Cyber grid + CRT scanlines + window chrome.
 -->
 <html lang="en">
@@ -16,17 +18,17 @@
   <style>
     /* ─── Hermes Cyber Terminal tokens ───────────────────────────────── */
     :root {
-      --hc-bg:      #0a0c10;
-      --hc-bg2:     #15151b;
-      --hc-surface: #12141a;
-      --hc-border:  rgba(126,211,164,0.18);
-      --hc-ink:     #e4e2d8;
-      --hc-ink2:    #8a8892;
-      --hc-green:   #7ed3a4;
-      --hc-cyan:    #64dfdf;
-      --hc-amber:   #e9c58a;
-      --hc-rose:    #d4a0b9;
-      --hc-red:     #ff6b6b;
+      --hc-bg:      #111410;
+      --hc-bg2:     #1A1E1A;
+      --hc-surface: #1A1E1A;
+      --hc-border:  rgba(139,168,136,0.18);
+      --hc-ink:     #E8E4DF;
+      --hc-ink2:    #8A8580;
+      --hc-green:   #8BA888;
+      --hc-cyan:    #8BA888;
+      --hc-amber:   #D4A855;
+      --hc-rose:    #B0A0C8;
+      --hc-red:     #C47D5A;
       --font-mono:  'JetBrains Mono','SF Mono',ui-monospace,Menlo,monospace;
       --font-sans:  'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
     }
@@ -78,8 +80,8 @@
     .hc-grid {
       position: absolute; inset: 0; pointer-events: none; opacity: 0.35; z-index: 0;
       background-image:
-        linear-gradient(rgba(126,211,164,0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(126,211,164,0.08) 1px, transparent 1px);
+        linear-gradient(rgba(139,168,136,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139,168,136,0.08) 1px, transparent 1px);
       background-size: 56px 56px;
       mask-image: radial-gradient(ellipse at 50% 50%, black 30%, transparent 80%);
       -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 30%, transparent 80%);
@@ -89,7 +91,7 @@
       background: repeating-linear-gradient(
         180deg,
         transparent 0, transparent 3px,
-        rgba(126,211,164,0.025) 3px, rgba(126,211,164,0.025) 4px
+        rgba(139,168,136,0.025) 3px, rgba(139,168,136,0.025) 4px
       );
       mix-blend-mode: screen;
     }
@@ -126,7 +128,7 @@
       line-height: 1.0;
       letter-spacing: -0.02em;
       color: var(--hc-green);
-      text-shadow: 0 0 30px rgba(126,211,164,0.35), 0 0 60px rgba(126,211,164,0.10);
+      text-shadow: 0 0 30px rgba(139,168,136,0.35), 0 0 60px rgba(139,168,136,0.10);
       margin: 0 0 14px;
     }
     .hc-h2 {
@@ -166,13 +168,13 @@
       border: 1px solid var(--hc-border);
       border-radius: 4px;
       color: var(--hc-green);
-      background: rgba(126,211,164,0.04);
+      background: rgba(139,168,136,0.04);
       margin: 2px 6px 2px 0;
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
-    .hc-tag.amber { color: var(--hc-amber); border-color: rgba(233,197,138,0.20); background: rgba(233,197,138,0.04); }
-    .hc-tag.red   { color: var(--hc-red);   border-color: rgba(255,107,107,0.25); background: rgba(255,107,107,0.05); }
+    .hc-tag.amber { color: var(--hc-amber); border-color: rgba(212,168,85,0.20); background: rgba(212,168,85,0.04); }
+    .hc-tag.red   { color: var(--hc-red);   border-color: rgba(196,125,90,0.25); background: rgba(196,125,90,0.05); }
 
     /* ─── cards ─────────────────────────────────────────────────────── */
     .hc-card {
@@ -203,7 +205,7 @@
       font-size: 14px;
       line-height: 1.85;
       color: #d8d4c8;
-      box-shadow: inset 0 0 60px rgba(126,211,164,0.04);
+      box-shadow: inset 0 0 60px rgba(139,168,136,0.04);
       margin: 0;
       overflow: auto;
       max-width: 920px;
@@ -214,7 +216,7 @@
     .hc-codebox .st  { color: var(--hc-green); }
     .hc-codebox .fn  { color: var(--hc-cyan); }
     .hc-codebox .var { color: var(--hc-rose); }
-    .hc-codebox .hl  { color: #fff; background: rgba(126,211,164,0.15); padding: 0 4px; border-radius: 3px; }
+    .hc-codebox .hl  { color: #fff; background: rgba(139,168,136,0.15); padding: 0 4px; border-radius: 3px; }
 
     /* ─── big stat ──────────────────────────────────────────────────── */
     .hc-big {
@@ -223,7 +225,7 @@
       font-weight: 700;
       line-height: 1;
       color: var(--hc-green);
-      text-shadow: 0 0 40px rgba(126,211,164,0.40), 0 0 80px rgba(126,211,164,0.15);
+      text-shadow: 0 0 40px rgba(139,168,136,0.40), 0 0 80px rgba(139,168,136,0.15);
       letter-spacing: -0.04em;
       margin: 0;
     }
@@ -236,7 +238,7 @@
       display: flex; justify-content: space-between;
       font-size: 10px; color: var(--hc-ink2);
       letter-spacing: 0.20em; text-transform: uppercase;
-      border-top: 1px solid rgba(126,211,164,0.10);
+      border-top: 1px solid rgba(139,168,136,0.10);
       padding-top: 14px;
       z-index: 2;
     }
@@ -253,7 +255,7 @@
     .deck-progress {
       position: fixed; top: 0; left: 0; height: 2px;
       background: var(--hc-green); width: 0;
-      box-shadow: 0 0 14px rgba(126,211,164,0.6);
+      box-shadow: 0 0 14px rgba(139,168,136,0.6);
       z-index: 30; transition: width 0.18s ease;
     }
   </style>
@@ -400,7 +402,7 @@
             • An interview that builds skills tailored to your real work
           </div>
         </div>
-        <div class="hc-card" style="border-color: rgba(233,197,138,0.20);">
+        <div class="hc-card" style="border-color: rgba(212,168,85,0.20);">
           <div class="lbl" style="color: var(--hc-amber);">// what you don't get</div>
           <div class="desc" style="margin-top: 4px;">
             • Support (it's a personal repo)<br>
