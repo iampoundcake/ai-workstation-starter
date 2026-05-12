@@ -1,0 +1,33 @@
+{
+  "name": "ai-workstation-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "AI Workstation dashboard — clickable skill buttons that spawn Claude Code",
+  "scripts": {
+    "dev": "concurrently -k -n server,ui -c yellow,cyan \"node server.js\" \"vite\"",
+    "dev:ui": "vite",
+    "dev:server": "node server.js",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "simplex-noise": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^3.4.19",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.10"
+  }
+}

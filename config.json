@@ -1,0 +1,7 @@
+{
+  "brand": "AI Workstation",
+  "tagline": "Your AI command center",
+  "vaultPath": "~/ai-workstation",
+  "clientsRoot": "~/ai-workstation/clients",
+  "theme": "workshop"
+}
